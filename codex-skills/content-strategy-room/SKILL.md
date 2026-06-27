@@ -48,6 +48,8 @@ If the user already provided enough context, skip the menu and route directly.
 
 | User state | Primary action | Required skill or asset |
 |---|---|---|
+| 第一次使用/项目缺 state | Initialize the content calibration workspace | `cheat-init` |
+| state/schema 版本不匹配 | Upgrade old state safely | `cheat-migrate` |
 | 有一个想法 | Deepen one topic, extract angle, optionally write draft | `cheat-seed` |
 | 有素材/链接/标题 | Sort materials into topic cards, then ask which one has personal stake | `cheat-trends` with manual-paste logic, then `cheat-seed` |
 | 候选池挑选 | Recommend one stable topic and one experimental topic | `cheat-recommend` |
@@ -58,7 +60,11 @@ If the user already provided enough context, skip the menu and route directly.
 | 有初稿要改 | Rewrite while preserving user judgment | `REWRITE-001` |
 | 文案像 AI | Remove AI taste and restore human judgment | `REVIEW-001` |
 | 视频画面/动画/分镜 | Plan or create visual execution for non-face videos | `hyperframes:hyperframes` / `hyperframes:hyperframes-cli` when production assets are requested |
+| 封面/视觉素材/位图资产 | Generate or edit bitmap visuals only when requested | `imagegen` |
 | 正文配图/手绘隐喻图 | Generate Chinese article-style illustrations | `ian-xiaohei-illustrations` when illustration assets are requested |
+| 数据表/复盘表/选题表 | Create or edit structured spreadsheets when requested | `spreadsheets` |
+| 虚拟产品/报告/文档化资产 | Package durable knowledge products when requested | `documents` / `pdf` / `presentations` |
+| OpenAI 产品/API/模型信息 | Verify current official OpenAI information | `openai-docs` |
 | 草稿打分 | Score without prediction | `cheat-score` |
 | 准备发布 | Write immutable pre-publish prediction | `cheat-predict` |
 | 拍完了 | Register shooting status | `cheat-shoot` |
@@ -70,6 +76,19 @@ If the user already provided enough context, skip the menu and route directly.
 | 不知道当前进度 | Show status and next action | `cheat-status` |
 
 Never invoke `cheat-score-blind` directly. It is internal to scoring/prediction workflows.
+
+## Skill Quality Gate
+
+Use skills by usefulness tier, not by quantity.
+
+| Tier | Use | Skills |
+|---|---|---|
+| Tier 1 daily core | Default content workflow; highest practical value for this project | `cheat-init`, `cheat-status`, `cheat-seed`, `cheat-recommend`, `cheat-trends`, `cheat-learn-from`, `transcribe`, prompt assets, `cheat-score`, `cheat-predict`, `cheat-publish`, `cheat-retro` |
+| Tier 2 calibration and growth | Use after enough samples or when the user explicitly asks | `cheat-persona`, `cheat-bump`, `cheat-migrate`, Douyin data adapter |
+| Tier 3 production assets | Use only when the user asks for visuals, video assets, documents, tables, or packaged products | `hyperframes`, `imagegen`, `ian-xiaohei-illustrations`, `spreadsheets`, `documents`, `pdf`, `presentations` |
+| Excluded by default | Do not route normal planning here | `cheat-score-blind`, generic browser/computer control, unrelated office tools |
+
+If a skill is not installed or not visible in the current session, do not pretend it is available. Continue with the closest manual workflow and state the limitation briefly.
 
 ## Producer Rules
 

@@ -72,6 +72,8 @@ Never tell the user "use prompt X" as the final answer if you can directly apply
 
 Use existing skills rather than reimplementing them:
 
+- Use `cheat-init` when a workspace has not been initialized.
+- Use `cheat-migrate` when `.cheat-state.json` exists but schema/version is incompatible.
 - Use `cheat-seed` for deepening a single idea and writing draft.
 - Use `cheat-trends` when the user explicitly wants material intake or has no ideas.
 - Use `cheat-recommend` when `candidates.md` already has scored candidates.
@@ -84,7 +86,44 @@ Use existing skills rather than reimplementing them:
 - Use `cheat-bump` only after there are enough samples or a clear calibration reason.
 - Use the Douyin session/data adapter if available when the user asks to capture Douyin metrics or comments; otherwise request manual numbers and top comments.
 - Use HyperFrames skills only when the user asks for actual video animation, HTML-based video composition, subtitles, visual effects, or rendering.
+- Use `imagegen` only when the user asks for bitmap visuals, cover images, visual concepts, or image edits.
 - Use `ian-xiaohei-illustrations` only when the user asks for Chinese article illustrations, metaphor visuals, or hand-drawn supporting images.
+- Use spreadsheet/document/PDF/presentation skills only when the user asks to turn content knowledge into reusable assets, reports, productized materials, tracking tables, or deliverables.
+- Use `openai-docs` only when the user asks for current official OpenAI product/API/model guidance.
+
+## Skill Use Quality Bar
+
+Treat the skill stack as a production toolkit, not a buffet. The default flow should use the smallest reliable set that moves the content forward.
+
+High-utility default skills:
+
+- `cheat-seed`
+- `cheat-recommend`
+- `cheat-trends`
+- `cheat-learn-from`
+- `transcribe`
+- prompt assets from `prompts/catalog.json`
+- `cheat-score`
+- `cheat-predict`
+- `cheat-publish`
+- `cheat-retro`
+- `cheat-status`
+
+Conditional but valuable skills:
+
+- `cheat-persona` after enough comments/reviews
+- `cheat-bump` after enough calibrated samples
+- `hyperframes`, `imagegen`, and `ian-xiaohei-illustrations` for actual visual production
+- `spreadsheets`, `documents`, `pdf`, and `presentations` for productized assets
+- `openai-docs` for current official OpenAI facts
+
+Avoid low-signal behavior:
+
+- Do not call visual production skills just to brainstorm a topic.
+- Do not call document/spreadsheet skills unless there is a deliverable.
+- Do not route to browser/computer-use for ordinary content thinking.
+- Do not invoke internal or blind-scoring skills directly.
+- Do not use unavailable skills; fall back to manual workflow and say so.
 
 ## Conversation Style
 
