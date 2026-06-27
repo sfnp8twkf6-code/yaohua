@@ -1,0 +1,36 @@
+.auth/
+.auth-xhs/
+.auth-linkedin/
+.cheat-secrets.json
+.cheat-cache/
+.venv/
+douyin-data/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Runtime caches
+__pycache__/
+*.py[cod]
+node_modules/
+.pytest_cache/
+.mypy_cache/
+
+# Local env files and secrets
+.env
+.env.*
+*.local
+
+# Large raw media should stay local; keep markdown/meta files synced.
+*.mp4
+*.mov
+*.m4v
+*.avi
+*.mkv
+*.wav
+*.mp3
+*.aac

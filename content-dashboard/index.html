@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>内容工作流总览站</title>
+  <style>
+    :root {
+      --bg: #10221f;
+      --bg-2: #17332e;
+      --card: #f4efe3;
+      --card-2: #fff9ed;
+      --ink: #13201d;
+      --muted: #6f746d;
+      --line: rgba(244,239,227,.18);
+      --gold: #d9a441;
+      --green: #79b88a;
+      --red: #d76348;
+      --blue: #76a9c7;
+      --shadow: 0 26px 80px rgba(0,0,0,.24);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--card);
+      font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        radial-gradient(circle at 18% 8%, rgba(217,164,65,.22), transparent 30%),
+        radial-gradient(circle at 88% 28%, rgba(121,184,138,.18), transparent 30%),
+        linear-gradient(135deg, #0e1c1a, #193d35 56%, #10221f);
+      background-size: 38px 38px, 38px 38px, auto, auto, auto;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 26px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .mark {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: var(--gold);
+      color: #17201c;
+      font: 900 22px/1 Georgia, serif;
+      box-shadow: 0 14px 36px rgba(217,164,65,.28);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -.04em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: rgba(244,239,227,.65);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .button {
+      border: 1px solid rgba(244,239,227,.18);
+      border-radius: 999px;
+      padding: 12px 15px;
+      min-height: 43px;
+      background: rgba(244,239,227,.08);
+      color: var(--card);
+      cursor: pointer;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      background: rgba(244,239,227,.14);
+    }
+
+    .button.gold {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #17201c;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-main {
+      position: relative;
+      overflow: hidden;
+      padding: 42px;
+      min-height: 380px;
+      border: 1px solid rgba(244,239,227,.16);
+      border-radius: 34px;
+      background:
+        linear-gradient(135deg, rgba(244,239,227,.12), rgba(244,239,227,.035)),
+        radial-gradient(circle at 82% 12%, rgba(217,164,65,.35), transparent 28%);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -90px;
+      width: 300px;
+      height: 300px;
+      border-radius: 42% 58% 47% 53%;
+      background: rgba(121,184,138,.24);
+      transform: rotate(18deg);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 7px 11px;
+      border-radius: 999px;
+      color: #ffe5b0;
+      background: rgba(217,164,65,.12);
+      border: 1px solid rgba(217,164,65,.25);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .hero-main h2 {
+      max-width: 820px;
+      margin: 24px 0 16px;
+      font-size: clamp(40px, 6vw, 82px);
+      line-height: .9;
+      letter-spacing: -.08em;
+    }
+
+    .hero-main p {
+      max-width: 720px;
+      margin: 0;
+      color: rgba(244,239,227,.72);
+      font-size: 18px;
+      line-height: 1.85;
+    }
+
+    .status-card {
+      padding: 28px;
+      border-radius: 34px;
+      background: var(--card);
+      color: var(--ink);
+      box-shadow: var(--shadow);
+    }
+
+    .status-card h3 {
+      margin: 0 0 16px;
+      font-size: 26px;
+      letter-spacing: -.05em;
+    }
+
+    .metric {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(19,32,29,.12);
+      align-items: center;
+    }
+
+    .metric span { color: var(--muted); }
+    .metric b { font-size: 18px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    section {
+      margin-top: 24px;
+    }
+
+    .panel {
+      border: 1px solid rgba(244,239,227,.15);
+      border-radius: 30px;
+      background: rgba(244,239,227,.075);
+      box-shadow: 0 18px 54px rgba(0,0,0,.16);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 26px 8px;
+      align-items: end;
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -.05em;
+    }
+
+    .panel-head p {
+      margin: 0;
+      max-width: 520px;
+      color: rgba(244,239,227,.62);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+      padding: 18px 22px 24px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      border: 1px solid rgba(244,239,227,.13);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(244,239,227,.065);
+    }
+
+    .num {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(217,164,65,.18);
+      color: #ffe1a3;
+      font-weight: 900;
+    }
+
+    .step h4 {
+      margin: 0 0 5px;
+      font-size: 17px;
+    }
+
+    .step p {
+      margin: 0;
+      color: rgba(244,239,227,.62);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .copy {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 12px;
+      color: #13201d;
+      background: var(--green);
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      padding: 18px 22px 24px;
+    }
+
+    .skill {
+      min-height: 152px;
+      border-radius: 20px;
+      padding: 18px;
+      background: var(--card);
+      color: var(--ink);
+      box-shadow: 0 14px 38px rgba(0,0,0,.12);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .skill b {
+      font-size: 18px;
+      letter-spacing: -.03em;
+    }
+
+    .skill span {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+      flex: 1;
+    }
+
+    .skill button {
+      align-self: flex-start;
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 12px;
+      color: white;
+      background: var(--bg-2);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      padding: 18px 22px 24px;
+    }
+
+    .file {
+      border-radius: 18px;
+      padding: 17px;
+      background: rgba(244,239,227,.1);
+      border: 1px solid rgba(244,239,227,.13);
+      transition: .2s ease;
+    }
+
+    .file:hover {
+      transform: translateY(-4px);
+      background: rgba(244,239,227,.16);
+    }
+
+    .file b {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .file span {
+      color: rgba(244,239,227,.62);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      padding: 13px 16px;
+      border-radius: 16px;
+      background: var(--gold);
+      color: #10221f;
+      transform: translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 20;
+      box-shadow: var(--shadow);
+      font-weight: 900;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1100px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+      .skill-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .file-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .shell { padding: 16px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .hero-main { padding: 26px; }
+      .step { grid-template-columns: 40px minmax(0, 1fr); }
+      .step .copy { grid-column: 1 / -1; }
+      .skill-grid, .file-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">C</div>
+        <div>
+          <h1>内容工作流总览站</h1>
+          <p>选题、写稿、预测、发布、复盘。这里只管内容生产，不管理提示词资产。</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <a class="button" href="http://127.0.0.1:8765">打开提示词库站</a>
+        <a class="button" href="../CONTENT_WORKBENCH.md" target="_blank">Markdown 工作台</a>
+        <button class="button gold" data-copy="状态">复制：状态</button>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="hero-main">
+        <span class="eyebrow">Content Operations · Douyin · v0</span>
+        <h2>每条内容，都走完闭环。</h2>
+        <p>你的目标不是“写一篇漂亮稿子”，而是建立一个能复盘、能校准、能沉淀资产的内容系统。这里把所有 SKILL 变成可点击、可复制的操作面板。</p>
+      </div>
+      <aside class="status-card">
+        <h3>当前状态</h3>
+        <div class="metric"><span>账号方向</span><b>商业结构拆解</b></div>
+        <div class="metric"><span>Rubric</span><b>v0</b></div>
+        <div class="metric"><span>校准样本</span><b>0</b></div>
+        <div class="metric"><span>典型时长</span><b>90 秒</b></div>
+        <div class="metric"><span>数据回收</span><b>douyin-session</b></div>
+        <div class="metric"><span>当前测试稿</span><b>瑞幸出海</b></div>
+      </aside>
+    </div>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>日常生产线</h3>
+          <p>按顺序点复制，然后发给 Codex。每一步都对应一个具体动作，不再靠记忆。</p>
+        </div>
+      </div>
+      <div class="flow" id="flow"></div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>下一条怎么开始</h3>
+            <p>这里是你最常用的启动口令。先不要想着完整系统，先让下一条内容往前走。</p>
+          </div>
+        </div>
+        <div class="flow">
+          <div class="step"><div class="num">A</div><div><h4>不知道拍什么</h4><p>从候选池或方向里选下一条。</p></div><button class="copy" data-copy="推荐下一条选题">复制</button></div>
+          <div class="step"><div class="num">B</div><div><h4>已有想法</h4><p>围绕你的具体想法深挖，写初稿。</p></div><button class="copy" data-copy="我想做一条关于【选题】的内容，帮我 seed">复制</button></div>
+          <div class="step"><div class="num">C</div><div><h4>标题不满意</h4><p>跳到提示词库，用标题工厂。</p></div><button class="copy" data-copy="用 TITLE-001 帮我给这条内容做标题工厂">复制</button></div>
+          <div class="step"><div class="num">D</div><div><h4>已有初稿</h4><p>改成最终发布版，再评分和预测。</p></div><button class="copy" data-copy="这是初稿，帮我用 REWRITE-001 改成最终发布版">复制</button></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>瑞幸测试稿</h3>
+            <p>当前第一条测试内容建议先走标题重做和最终稿改写，然后启动预测。</p>
+          </div>
+        </div>
+        <div class="flow">
+          <div class="step"><div class="num">1</div><div><h4>重做标题</h4><p>先把选题标题变得更有吸引力。</p></div><button class="copy" data-copy="用 TITLE-001 帮我给瑞幸这条重做标题">复制</button></div>
+          <div class="step"><div class="num">2</div><div><h4>改最终稿</h4><p>补个人判断、电影解说感和生活启发。</p></div><button class="copy" data-copy="用 REWRITE-001 把瑞幸这条改成最终发布版">复制</button></div>
+          <div class="step"><div class="num">3</div><div><h4>启动预测</h4><p>发布前写下判断，后续才能复盘。</p></div><button class="copy" data-copy="启动预测 scripts/2026-06-26_luckin-overseas-efficiency.md">复制</button></div>
+          <a class="step" href="../scripts/2026-06-26_luckin-overseas-efficiency.md" target="_blank"><div class="num">↗</div><div><h4>打开脚本文件</h4><p>查看当前瑞幸脚本源文件。</p></div></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>SKILL 菜单</h3>
+          <p>所有之前提到的 SKILL 都在这里。每张卡片都能复制触发口令。</p>
+        </div>
+      </div>
+      <div class="skill-grid" id="skills"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>项目文件地图</h3>
+          <p>常用文件直接点开。提示词库请去另一个站，这里只放内容生产相关文件。</p>
+        </div>
+      </div>
+      <div class="file-grid">
+        <a class="file" href="../candidates.md" target="_blank"><b>candidates.md</b><span>选题池</span></a>
+        <a class="file" href="../scripts/" target="_blank"><b>scripts/</b><span>拍摄前脚本</span></a>
+        <a class="file" href="../predictions/" target="_blank"><b>predictions/</b><span>发布前预测</span></a>
+        <a class="file" href="../videos/" target="_blank"><b>videos/</b><span>拍后和复盘资料</span></a>
+        <a class="file" href="../rubric_notes.md" target="_blank"><b>rubric_notes.md</b><span>评分规则</span></a>
+        <a class="file" href="../script_patterns.md" target="_blank"><b>script_patterns.md</b><span>写作结构</span></a>
+        <a class="file" href="../audience.md" target="_blank"><b>audience.md</b><span>受众画像</span></a>
+        <a class="file" href="../STATUS.md" target="_blank"><b>STATUS.md</b><span>状态记录</span></a>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">已复制</div>
+
+  <script>
+    const flow = [
+      ["01", "找选题", "从想法、候选池或热点里确定一个具体主题。", "我想做一条关于【选题】的内容，帮我 seed"],
+      ["02", "拆逻辑和标题", "用提示词库先想深，再让标题更有冲突。", "用 THINK-001 和 TITLE-001 帮我处理这个选题"],
+      ["03", "写稿", "生成 90-120 秒口播稿，补个人判断和生活启发。", "用 WRITE-001 把这条改成口播稿"],
+      ["04", "草稿打分", "先看脚本在 v0 rubric 下的问题。", "打分这篇 scripts/xxx.md"],
+      ["05", "启动预测", "发布前写下不可变预测，后续才有复盘价值。", "启动预测 scripts/xxx.md"],
+      ["06", "拍完登记", "记录已拍摄，进入待发布队列。", "拍完了 scripts/xxx.md"],
+      ["07", "发布登记", "记录链接和发布时间。", "已发布，链接是 xxx"],
+      ["08", "T+3 复盘", "抓播放、评论、收藏和预测偏差。", "复盘这条"],
+      ["09", "升级规则", "累计 5 条新定位内容后校准 rubric。", "升级 rubric"]
+    ];
+
+    const skills = [
+      ["cheat-seed", "深挖单个选题，生成角度和草稿。", "我想做一条关于【选题】的内容，帮我 seed"],
+      ["cheat-recommend", "从 candidates.md 推荐下一条。", "推荐下一条选题"],
+      ["cheat-trends", "抓热点，补充候选池。", "抓热点"],
+      ["cheat-learn-from", "拆对标账号，学习标题、结构和节奏。", "拆这个对标账号"],
+      ["transcribe", "转录对标视频、访谈或播客。", "转录这个视频"],
+      ["cheat-score", "草稿评分，不写预测。", "打分这篇 scripts/xxx.md"],
+      ["cheat-predict", "发布前写不可变预测。", "启动预测 scripts/xxx.md"],
+      ["cheat-shoot", "登记已拍摄。", "拍完了 scripts/xxx.md"],
+      ["cheat-publish", "记录发布链接和时间。", "已发布，链接是 xxx"],
+      ["cheat-retro", "T+3 抓数据并复盘。", "复盘这条"],
+      ["cheat-persona", "从评论和复盘中更新受众画像。", "更新受众画像"],
+      ["cheat-bump", "有足够样本后升级评分规则。", "升级 rubric"],
+      ["cheat-status", "查看当前状态和待复盘。", "状态"],
+      ["douyin-session", "抓取抖音作品数据和评论。", "抓抖音数据"]
+    ];
+
+    const flowWrap = document.getElementById("flow");
+    const skillsWrap = document.getElementById("skills");
+    const toast = document.getElementById("toast");
+
+    flowWrap.innerHTML = flow.map(item => `
+      <div class="step">
+        <div class="num">${item[0]}</div>
+        <div><h4>${item[1]}</h4><p>${item[2]}</p></div>
+        <button class="copy" data-copy="${item[3]}">复制</button>
+      </div>
+    `).join("");
+
+    skillsWrap.innerHTML = skills.map(item => `
+      <article class="skill">
+        <b>${item[0]}</b>
+        <span>${item[1]}</span>
+        <button data-copy="${item[2]}">复制口令</button>
+      </article>
+    `).join("");
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const area = document.createElement("textarea");
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+      }
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+
+    document.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-copy]");
+      if (btn) copyText(btn.dataset.copy);
+    });
+  </script>
+</body>
+</html>

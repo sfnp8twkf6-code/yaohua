@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>提示词库管理站</title>
+  <style>
+    :root {
+      --paper: #f8efe1;
+      --paper-2: #fffaf1;
+      --ink: #17201c;
+      --muted: #70746b;
+      --line: #dfd2bd;
+      --accent: #d75d2f;
+      --teal: #0f766e;
+      --gold: #d9a441;
+      --deep: #20332c;
+      --danger: #b94035;
+      --shadow: 0 24px 70px rgba(54, 39, 21, .14);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(215, 93, 47, .15), transparent 28%),
+        radial-gradient(circle at 86% 18%, rgba(15, 118, 110, .14), transparent 25%),
+        linear-gradient(135deg, #faf1e2 0%, #efe1cc 52%, #f8f5ee 100%);
+      min-height: 100vh;
+    }
+    button, input, textarea, select { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+    .shell {
+      display: grid;
+      grid-template-columns: 288px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      border-right: 1px solid rgba(32, 51, 44, .14);
+      background: rgba(255, 250, 241, .76);
+      backdrop-filter: blur(22px);
+    }
+    .brand-mark {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: var(--deep);
+      color: #ffe4b8;
+      font: 900 22px/1 Georgia, serif;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+    h1, h2, h3, h4, p { margin-top: 0; }
+    h1 { margin-bottom: 8px; font-size: 25px; letter-spacing: -.04em; }
+    aside p { color: var(--muted); line-height: 1.7; font-size: 14px; }
+    nav { display: grid; gap: 10px; margin-top: 24px; }
+    nav button, .side-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 46px;
+      border: 1px solid rgba(32, 51, 44, .12);
+      border-radius: 15px;
+      padding: 0 14px;
+      background: rgba(255,255,255,.48);
+      color: #26352f;
+      cursor: pointer;
+      transition: .18s ease;
+      font-weight: 800;
+    }
+    nav button:hover, .side-link:hover { transform: translateX(4px); background: rgba(255,255,255,.8); }
+    nav button.active { color: #fff7e8; background: var(--deep); }
+    .side-block {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(32, 51, 44, .12);
+    }
+    main { padding: 34px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+      padding: 38px;
+      border-radius: 34px;
+      color: #fff7e8;
+      background:
+        linear-gradient(135deg, rgba(32, 51, 44, .98), rgba(21, 70, 61, .9)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 22px);
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      right: -90px;
+      bottom: -120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(215,93,47,.58), transparent 68%);
+    }
+    .eyebrow {
+      display: inline-flex;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.07);
+      color: #ffe2bf;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .hero h2 {
+      max-width: 900px;
+      margin: 22px 0 14px;
+      font-size: clamp(36px, 6vw, 76px);
+      line-height: .92;
+      letter-spacing: -.08em;
+    }
+    .hero p {
+      max-width: 780px;
+      color: rgba(255,247,232,.78);
+      font-size: 17px;
+      line-height: 1.85;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--ink);
+      background: #ffe1bd;
+      font-weight: 900;
+      transition: .18s ease;
+    }
+    .button:hover { transform: translateY(-2px); filter: brightness(1.03); }
+    .button.secondary { background: rgba(255,255,255,.14); color: #fff7e8; border: 1px solid rgba(255,255,255,.18); }
+    .button.ink { background: var(--deep); color: #fff7e8; }
+    .button.danger { background: var(--danger); color: white; }
+    section { margin-top: 30px; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+    .section-head h3 { margin-bottom: 0; font-size: 30px; letter-spacing: -.05em; }
+    .section-head p { margin-bottom: 0; max-width: 640px; color: var(--muted); line-height: 1.7; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .stat {
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255,255,255,.08);
+    }
+    .stat b { display: block; font-size: 26px; margin-bottom: 4px; }
+    .stat span { color: rgba(255,247,232,.7); font-size: 13px; }
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .search, .field, .editor textarea, .editor select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,250,241,.88);
+      color: var(--ink);
+      outline: none;
+    }
+    .search, .field, .editor select { height: 50px; padding: 0 15px; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      border: 1px solid rgba(32,51,44,.16);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.55);
+      color: #34443d;
+      cursor: pointer;
+      font-weight: 900;
+    }
+    .chip.active { color: #fff7e8; background: var(--accent); border-color: var(--accent); }
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .card {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 354px;
+      border: 1px solid rgba(32,51,44,.12);
+      border-radius: var(--radius);
+      padding: 21px;
+      background: rgba(255,250,241,.78);
+      box-shadow: 0 18px 42px rgba(54,39,21,.09);
+      transition: .2s ease;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 28px 60px rgba(54,39,21,.14); }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--teal));
+    }
+    .card-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+    .id {
+      display: inline-flex;
+      min-width: 82px;
+      height: 30px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: var(--deep);
+      color: #fff4dc;
+      font-weight: 900;
+      font-size: 12px;
+    }
+    .legacy {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .stage {
+      display: inline-flex;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(15,118,110,.1);
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .card h4 { margin-bottom: 8px; font-size: 21px; letter-spacing: -.04em; }
+    .meta { color: var(--muted); font-size: 13px; line-height: 1.65; margin-bottom: 12px; }
+    .preview {
+      flex: 1;
+      margin: 0 0 14px;
+      padding: 14px;
+      border: 1px solid rgba(32,51,44,.1);
+      border-radius: 16px;
+      background: rgba(255,255,255,.52);
+      color: #38433e;
+      line-height: 1.75;
+      font-size: 13px;
+      white-space: pre-wrap;
+      max-height: 152px;
+      overflow: hidden;
+    }
+    .vars { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .var {
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(217,164,65,.16);
+      color: #7a5712;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .card-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .mini {
+      border: 1px solid rgba(32,51,44,.14);
+      border-radius: 999px;
+      padding: 9px 12px;
+      background: rgba(255,255,255,.62);
+      color: #26362f;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .mini.primary { border-color: transparent; background: var(--teal); color: white; }
+    .mini.danger { border-color: transparent; background: var(--danger); color: white; }
+    .mini.gold { border-color: transparent; background: var(--gold); color: #17201c; }
+    .empty {
+      grid-column: 1 / -1;
+      padding: 36px;
+      border: 1px dashed rgba(32,51,44,.2);
+      border-radius: 24px;
+      background: rgba(255,255,255,.46);
+      color: var(--muted);
+      text-align: center;
+    }
+    dialog {
+      width: min(980px, calc(100vw - 30px));
+      max-height: calc(100vh - 34px);
+      border: 0;
+      border-radius: 28px;
+      padding: 0;
+      box-shadow: var(--shadow);
+      background: var(--paper-2);
+      color: var(--ink);
+    }
+    dialog::backdrop { background: rgba(13,25,22,.5); backdrop-filter: blur(4px); }
+    .editor { padding: 26px; }
+    .editor-head { display: flex; justify-content: space-between; gap: 14px; align-items: start; margin-bottom: 18px; }
+    .editor h3 { margin-bottom: 5px; font-size: 27px; }
+    .editor p { margin-bottom: 0; color: var(--muted); line-height: 1.6; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid .wide { grid-column: 1 / -1; }
+    label { display: grid; gap: 7px; color: #34443d; font-size: 13px; font-weight: 900; }
+    .editor textarea { min-height: 280px; resize: vertical; padding: 14px; line-height: 1.65; }
+    .editor .notes { min-height: 92px; }
+    .editor-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      padding: 13px 16px;
+      border-radius: 16px;
+      background: #17201c;
+      color: #fff7e8;
+      transform: translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 20;
+      box-shadow: var(--shadow);
+      font-weight: 900;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    @media (max-width: 1180px) {
+      .shell { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; border-right: 0; border-bottom: 1px solid rgba(32,51,44,.12); }
+      nav { grid-template-columns: repeat(2, 1fr); }
+      .prompt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      main { padding: 18px; }
+      .hero { padding: 26px; border-radius: 26px; }
+      .toolbar, .form-grid, nav, .prompt-grid, .stats { grid-template-columns: 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand-mark">P</div>
+      <h1>提示词库管理站</h1>
+      <p>这是可读写版本。你可以直接新增、编辑、删除到回收站、恢复和永久删除提示词。</p>
+      <nav>
+        <button class="active" data-view="active">当前提示词 <span id="activeCount">0</span></button>
+        <button data-view="trash">回收站 <span id="trashCount">0</span></button>
+        <button id="newPromptSide">新增提示词 <span>+</span></button>
+        <a class="side-link" href="/content-dashboard/index.html">内容工作流站 <span>↗</span></a>
+      </nav>
+      <div class="side-block">
+        <a class="side-link" href="/PROMPT_WORKBENCH.md" target="_blank">Markdown 工作台 <span>↗</span></a>
+        <a class="side-link" href="/prompts/catalog.json" target="_blank">数据源 catalog.json <span>↗</span></a>
+        <button data-open-path="prompts/active">打开 active 文件夹 <span>↗</span></button>
+        <button data-open-path="prompts/trash">打开 trash 文件夹 <span>↗</span></button>
+      </div>
+    </aside>
+    <main>
+      <header class="hero">
+        <span class="eyebrow">Local Prompt Manager · http://127.0.0.1:8765</span>
+        <h2>提示词要像资产一样管理。</h2>
+        <p>首页直接显示提示词内容预览；卡片上可以复制、编辑、删除。删除不会马上消失，而是进入回收站，你可以恢复，也可以永久删除。</p>
+        <div class="hero-actions">
+          <button class="button" id="newPromptHero">新增提示词</button>
+          <button class="button secondary" data-copy="用 TITLE-001 帮我给这条内容做标题工厂">复制标题工厂口令</button>
+          <a class="button secondary" href="/content-dashboard/index.html">去内容工作流站</a>
+        </div>
+        <div class="stats">
+          <div class="stat"><b id="statActive">0</b><span>当前可用</span></div>
+          <div class="stat"><b id="statTrash">0</b><span>回收站</span></div>
+          <div class="stat"><b>语义编号</b><span>THINK / TITLE / WRITE / REVIEW</span></div>
+          <div class="stat"><b>真实读写</b><span>同步 prompts 文件夹</span></div>
+        </div>
+      </header>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <h3 id="viewTitle">当前提示词</h3>
+            <p id="viewDesc">按用途、平台或编号搜索。卡片里会直接显示提示词开头，不用点进去猜它干什么。</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <input class="search" id="search" placeholder="搜索：TITLE、Gemini、去 AI 味、标题..." />
+          <div class="filter-row" id="filters"></div>
+        </div>
+        <div class="prompt-grid" id="promptGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="editorDialog">
+    <form class="editor" method="dialog">
+      <div class="editor-head">
+        <div>
+          <h3 id="editorTitle">新增提示词</h3>
+          <p>保存后会同步写入 `prompts/active/` 和 `prompts/catalog.json`。</p>
+        </div>
+        <button class="mini" value="cancel">关闭</button>
+      </div>
+      <input type="hidden" id="promptId" />
+      <div class="form-grid">
+        <label>阶段
+          <select id="stage">
+            <option value="think">想深 THINK</option>
+            <option value="title">标题 TITLE</option>
+            <option value="write">写稿 WRITE</option>
+            <option value="rewrite">改稿 REWRITE</option>
+            <option value="review">审稿 REVIEW</option>
+            <option value="general">通用 GENERAL</option>
+          </select>
+        </label>
+        <label>平台
+          <input class="field" id="platform" placeholder="DeepSeek / Gemini / 通用" />
+        </label>
+        <label class="wide">标题
+          <input class="field" id="title" placeholder="例如：标题工厂" />
+        </label>
+        <label class="wide">作用
+          <input class="field" id="purpose" placeholder="这条提示词解决什么问题？" />
+        </label>
+        <label class="wide">适合场景
+          <input class="field" id="scenario" placeholder="什么时候用它？" />
+        </label>
+        <label class="wide">标签，用逗号分隔
+          <input class="field" id="tags" placeholder="标题, Gemini, 短视频" />
+        </label>
+        <label class="wide">可复制提示词
+          <textarea id="content" placeholder="把提示词正文写在这里。"></textarea>
+        </label>
+        <label class="wide">使用备注
+          <textarea class="notes" id="notes" placeholder="使用技巧、限制、二次追问方式。"></textarea>
+        </label>
+      </div>
+      <div class="editor-actions">
+        <button class="button secondary" value="cancel">取消</button>
+        <button class="button ink" id="savePrompt" value="default">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast">完成</div>
+
+  <script>
+    const stageLabels = {
+      think: "想深",
+      title: "标题",
+      write: "写稿",
+      rewrite: "改稿",
+      review: "审稿",
+      general: "通用"
+    };
+    const filters = ["全部", "想深", "标题", "写稿", "改稿", "审稿", "DeepSeek", "Gemini", "通用"];
+    let prompts = [];
+    let activeView = "active";
+    let activeFilter = "全部";
+
+    const grid = document.getElementById("promptGrid");
+    const search = document.getElementById("search");
+    const filterWrap = document.getElementById("filters");
+    const toast = document.getElementById("toast");
+    const dialog = document.getElementById("editorDialog");
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    async function request(path, options = {}) {
+      const response = await fetch(path, {
+        headers: { "Content-Type": "application/json" },
+        ...options
+      });
+      const data = await response.json();
+      if (!response.ok || data.ok === false) throw new Error(data.error || "请求失败");
+      return data;
+    }
+
+    async function loadPrompts() {
+      const [active, trash] = await Promise.all([
+        request("/api/prompts?status=active"),
+        request("/api/prompts?status=trash")
+      ]);
+      const activeItems = active.items || [];
+      const trashItems = trash.items || [];
+      document.getElementById("activeCount").textContent = activeItems.length;
+      document.getElementById("trashCount").textContent = trashItems.length;
+      document.getElementById("statActive").textContent = activeItems.length;
+      document.getElementById("statTrash").textContent = trashItems.length;
+      prompts = activeView === "active" ? activeItems : trashItems;
+      renderCards();
+    }
+
+    function renderFilters() {
+      filterWrap.innerHTML = filters.map(name => `<button class="chip ${name === activeFilter ? "active" : ""}" data-filter="${name}">${name}</button>`).join("");
+    }
+
+    function matchFilter(item, filter) {
+      if (filter === "全部") return true;
+      const stage = stageLabels[item.stage] || item.stage || "";
+      const text = `${item.id} ${item.legacy_id || ""} ${item.platform} ${item.title} ${item.purpose} ${item.scenario} ${(item.tags || []).join(" ")} ${stage}`.toLowerCase();
+      return text.includes(filter.toLowerCase());
+    }
+
+    function renderCards() {
+      const q = search.value.trim().toLowerCase();
+      const list = prompts.filter(item => {
+        const text = `${item.id} ${item.legacy_id || ""} ${item.platform} ${item.title} ${item.purpose} ${item.scenario} ${item.preview} ${(item.tags || []).join(" ")}`.toLowerCase();
+        return (!q || text.includes(q)) && matchFilter(item, activeFilter);
+      });
+      document.getElementById("viewTitle").textContent = activeView === "active" ? "当前提示词" : "回收站";
+      document.getElementById("viewDesc").textContent = activeView === "active"
+        ? "首页直接展示提示词预览。你可以复制、编辑或删除到回收站。"
+        : "这里是已删除提示词。你可以恢复，也可以永久删除。";
+      grid.innerHTML = list.map(item => cardTemplate(item)).join("") || `<div class="empty">这里暂时没有提示词。</div>`;
+    }
+
+    function cardTemplate(item) {
+      const variables = (item.variables || []).slice(0, 5).map(v => `<span class="var">${escapeHtml(v)}</span>`).join("");
+      const tags = (item.tags || []).slice(0, 4).map(v => `<span class="var">${escapeHtml(v)}</span>`).join("");
+      const actions = activeView === "active"
+        ? `
+          <button class="mini primary" data-action="copy" data-id="${item.id}">复制提示词</button>
+          <button class="mini gold" data-action="edit" data-id="${item.id}">编辑</button>
+          <button class="mini danger" data-action="trash" data-id="${item.id}">删除</button>
+        `
+        : `
+          <button class="mini primary" data-action="restore" data-id="${item.id}">恢复</button>
+          <button class="mini danger" data-action="delete" data-id="${item.id}">永久删除</button>
+        `;
+      return `
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <span class="id">${escapeHtml(item.id)}</span>
+              ${item.legacy_id ? `<span class="legacy">原 ${escapeHtml(item.legacy_id)}</span>` : ""}
+            </div>
+            <span class="stage">${escapeHtml(stageLabels[item.stage] || item.stage || "通用")}</span>
+          </div>
+          <h4>${escapeHtml(item.title)}</h4>
+          <div class="meta">${escapeHtml(item.platform || "通用")} · ${escapeHtml(item.scenario || item.purpose || "")}</div>
+          <div class="preview">${escapeHtml(item.preview || "暂无提示词内容")}</div>
+          <div class="vars">${variables || tags}</div>
+          <div class="card-actions">${actions}</div>
+        </article>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const area = document.createElement("textarea");
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+      }
+      showToast("已复制");
+    }
+
+    function setView(view) {
+      activeView = view;
+      document.querySelectorAll("[data-view]").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
+      loadPrompts().catch(err => showToast(err.message));
+    }
+
+    function openEditor(item = null) {
+      document.getElementById("editorTitle").textContent = item ? `编辑 ${item.id}` : "新增提示词";
+      document.getElementById("promptId").value = item?.id || "";
+      document.getElementById("stage").value = item?.stage || "general";
+      document.getElementById("platform").value = item?.platform || "通用";
+      document.getElementById("title").value = item?.title || "";
+      document.getElementById("purpose").value = item?.purpose || "";
+      document.getElementById("scenario").value = item?.scenario || "";
+      document.getElementById("tags").value = (item?.tags || []).join(", ");
+      document.getElementById("content").value = item?.content || "";
+      document.getElementById("notes").value = item?.notes || "";
+      dialog.showModal();
+    }
+
+    function formPayload() {
+      return {
+        stage: document.getElementById("stage").value,
+        platform: document.getElementById("platform").value.trim(),
+        title: document.getElementById("title").value.trim(),
+        purpose: document.getElementById("purpose").value.trim(),
+        scenario: document.getElementById("scenario").value.trim(),
+        tags: document.getElementById("tags").value.split(",").map(v => v.trim()).filter(Boolean),
+        content: document.getElementById("content").value.trim(),
+        notes: document.getElementById("notes").value.trim()
+      };
+    }
+
+    async function savePrompt(event) {
+      event.preventDefault();
+      const id = document.getElementById("promptId").value;
+      const payload = formPayload();
+      if (!payload.title || !payload.content) {
+        showToast("标题和提示词不能为空");
+        return;
+      }
+      if (id) {
+        await request(`/api/prompts/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(payload) });
+        showToast("已保存修改");
+      } else {
+        await request("/api/prompts", { method: "POST", body: JSON.stringify(payload) });
+        showToast("已新增提示词");
+      }
+      dialog.close();
+      await loadPrompts();
+    }
+
+    document.addEventListener("click", async (event) => {
+      const viewBtn = event.target.closest("[data-view]");
+      if (viewBtn) return setView(viewBtn.dataset.view);
+
+      const filterBtn = event.target.closest("[data-filter]");
+      if (filterBtn) {
+        activeFilter = filterBtn.dataset.filter;
+        renderFilters();
+        renderCards();
+        return;
+      }
+
+      const openBtn = event.target.closest("[data-open-path]");
+      if (openBtn) {
+        try {
+          await request(`/api/open?path=${encodeURIComponent(openBtn.dataset.openPath)}`);
+          showToast("已打开文件夹");
+        } catch (err) {
+          showToast(err.message);
+        }
+        return;
+      }
+
+      if (event.target.closest("#newPromptHero") || event.target.closest("#newPromptSide")) {
+        openEditor();
+        return;
+      }
+
+      const actionBtn = event.target.closest("[data-action]");
+      if (!actionBtn) {
+        const copyBtn = event.target.closest("[data-copy]");
+        if (copyBtn) copyText(copyBtn.dataset.copy);
+        return;
+      }
+
+      const id = actionBtn.dataset.id;
+      const item = prompts.find(p => p.id === id);
+      try {
+        if (actionBtn.dataset.action === "copy") await copyText(item.content || "");
+        if (actionBtn.dataset.action === "edit") openEditor(item);
+        if (actionBtn.dataset.action === "trash") {
+          if (confirm(`把 ${id} 放入回收站？`)) {
+            await request(`/api/prompts/${encodeURIComponent(id)}/trash`, { method: "POST" });
+            showToast("已放入回收站");
+            await loadPrompts();
+          }
+        }
+        if (actionBtn.dataset.action === "restore") {
+          await request(`/api/prompts/${encodeURIComponent(id)}/restore`, { method: "POST" });
+          showToast("已恢复");
+          await loadPrompts();
+        }
+        if (actionBtn.dataset.action === "delete") {
+          if (confirm(`永久删除 ${id}？这个操作不能撤销。`)) {
+            await request(`/api/prompts/${encodeURIComponent(id)}`, { method: "DELETE" });
+            showToast("已永久删除");
+            await loadPrompts();
+          }
+        }
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    document.getElementById("savePrompt").addEventListener("click", savePrompt);
+    search.addEventListener("input", renderCards);
+
+    renderFilters();
+    loadPrompts().catch(err => {
+      grid.innerHTML = `<div class="empty">无法连接本地服务：${escapeHtml(err.message)}。请用桌面快捷方式启动。</div>`;
+    });
+  </script>
+</body>
+</html>

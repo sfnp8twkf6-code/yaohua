@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-27T02:01:54+08:00",
+  "items": [
+    {
+      "id": "THINK-001",
+      "legacy_id": "P001",
+      "status": "active",
+      "stage": "think",
+      "platform": "DeepSeek",
+      "title": "商业逻辑深挖",
+      "purpose": "先把选题想深，找到反常识观点、底层商业结构、争议点和生活启发。",
+      "scenario": "有选题但讲不深，标题不够强，文案像资料整理。",
+      "tags": [
+        "DeepSeek",
+        "逻辑",
+        "反常识",
+        "选题"
+      ],
+      "file": "prompts/active/THINK-001-deepseek-logic-dissection.md",
+      "created_at": "2026-06-27T00:00:00+08:00",
+      "updated_at": "2026-06-27T00:00:00+08:00"
+    },
+    {
+      "id": "TITLE-001",
+      "legacy_id": "P006",
+      "status": "active",
+      "stage": "title",
+      "platform": "Gemini / DeepSeek / 通用",
+      "title": "标题工厂",
+      "purpose": "批量生成和筛选短视频标题。",
+      "scenario": "对标题不满意，觉得不够吸引人、不够高级、不够有冲突。",
+      "tags": [
+        "标题",
+        "Gemini",
+        "DeepSeek",
+        "短视频"
+      ],
+      "file": "prompts/active/TITLE-001-title-factory.md",
+      "created_at": "2026-06-27T00:00:00+08:00",
+      "updated_at": "2026-06-27T00:00:00+08:00"
+    },
+    {
+      "id": "WRITE-001",
+      "legacy_id": "P002",
+      "status": "active",
+      "stage": "write",
+      "platform": "Gemini",
+      "title": "标题和口播润色",
+      "purpose": "把已经拆好的商业逻辑，改成更适合短视频的标题、开头、口播稿、分镜和金句。",
+      "scenario": "已经有核心观点，或者已经用 DeepSeek 拆过逻辑，但表达还不够抓人。",
+      "tags": [
+        "Gemini",
+        "口播",
+        "分镜",
+        "润色"
+      ],
+      "file": "prompts/active/WRITE-001-gemini-title-script-polisher.md",
+      "created_at": "2026-06-27T00:00:00+08:00",
+      "updated_at": "2026-06-27T00:00:00+08:00"
+    },
+    {
+      "id": "WRITE-002",
+      "legacy_id": "P003",
+      "status": "active",
+      "stage": "write",
+      "platform": "通用",
+      "title": "通用人味口播生成",
+      "purpose": "一次性生成标题、框架、口播稿和审稿建议。",
+      "scenario": "只想用一个平台完成初稿。",
+      "tags": [
+        "通用",
+        "初稿",
+        "口播",
+        "人味"
+      ],
+      "file": "prompts/active/WRITE-002-universal-human-script.md",
+      "created_at": "2026-06-27T00:00:00+08:00",
+      "updated_at": "2026-06-27T00:00:00+08:00"
+    },
+    {
+      "id": "REWRITE-001",
+      "legacy_id": "P004",
+      "status": "active",
+      "stage": "rewrite",
+      "platform": "通用",
+      "title": "改写已有初稿",
+      "purpose": "保留你的核心观点，优化标题、节奏、人味和获得感。",
+      "scenario": "你已经写完文章或口播稿，希望在自己基础上改得更适合短视频。",
+      "tags": [
+        "通用",
+        "改稿",
+        "初稿",
+        "发布版"
+      ],
+      "file": "prompts/active/REWRITE-001-rewrite-existing-draft.md",
+      "created_at": "2026-06-27T00:00:00+08:00",
+      "updated_at": "2026-06-27T00:00:00+08:00"
+    },
+    {
+      "id": "REVIEW-001",
+      "legacy_id": "P005",
+      "status": "active",
+      "stage": "review",
+      "platform": "通用",
+      "title": "去 AI 味审稿",
+      "purpose": "删除报告腔、套话、空话和过度完整的 AI 表达，让文案更像真人口播。",
+      "scenario": "稿子逻辑正确，但读起来没有人味、不动人、不像你。",
+      "tags": [
+        "通用",
+        "审稿",
+        "去 AI 味",
+        "人味"
+      ],
+      "file": "prompts/active/REVIEW-001-ai-taste-removal-review.md",
+      "created_at": "2026-06-27T00:00:00+08:00",
+      "updated_at": "2026-06-27T00:00:00+08:00"
+    }
+  ]
+}
