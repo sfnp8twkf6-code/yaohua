@@ -39,6 +39,27 @@ When the user pastes multiple materials, classify each item:
 
 Then merge duplicates and produce 3-7 topic cards. Do not dump every item back at the user.
 
+## Benchmark And Visual Reference Intake
+
+When the user gives a creator, blogger, or account as reference, separate three layers:
+
+- Script/language/reference: save to `benchmark.md`, `samples/<creator>/`, and `script_patterns.md`.
+- Visual style/reference: save to `visual_patterns.md`.
+- Scoring/calibration signal: save only when there is enough data and user impression; route through `cheat-learn-from`.
+
+For each creator sample, ask for or extract:
+
+- platform and creator name
+- link
+- title
+- script/subtitle/copy
+- visible metrics if available
+- the user's impression: high/mid/low and why
+- what the user wants to borrow
+- what the user refuses to imitate
+
+Do not blend different creator types into one generic benchmark. Tag each creator by what they are useful for: language, rhythm, structure, title, visual style, editing, or monetization angle.
+
 ## Judging A Topic
 
 Use these filters before recommending:
@@ -146,6 +167,7 @@ When the user confirms a topic, update or create the appropriate artifact:
 - prediction: `predictions/*.md`
 - published/review data: `videos/*` and related prediction metadata
 - prompt improvements: `prompts/catalog.json` and `prompts/active/*.md`
+- visual/reference patterns: `visual_patterns.md`
 
 Do not write files for casual brainstorming unless the user confirms.
 

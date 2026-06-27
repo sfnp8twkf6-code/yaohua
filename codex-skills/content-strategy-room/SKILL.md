@@ -54,6 +54,7 @@ If the user already provided enough context, skip the menu and route directly.
 | 有素材/链接/标题 | Sort materials into topic cards, then ask which one has personal stake | `cheat-trends` with manual-paste logic, then `cheat-seed` |
 | 候选池挑选 | Recommend one stable topic and one experimental topic | `cheat-recommend` |
 | 对标账号/视频 | Import benchmark patterns and comments | `cheat-learn-from`; use `transcribe` if audio/video transcription is needed |
+| 参考博主画风/剪辑/字幕 | Save reusable visual patterns without copying | `visual_patterns.md`; use visual production skills only if creating assets |
 | 标题不满意 | Use title prompt from prompt library | `TITLE-001` in `prompts/catalog.json` |
 | 想深商业逻辑 | Use logic prompt from prompt library | `THINK-001` |
 | 写口播/改口播 | Use script prompt from prompt library | `WRITE-001` or `WRITE-002` |
@@ -140,6 +141,7 @@ When available, read these local files before making recommendations:
 - `audience.md`
 - `rubric_notes.md`
 - `benchmark.md`
+- `visual_patterns.md`
 - `prompts/catalog.json`
 - recent `scripts/*.md`
 - recent `predictions/*.md`

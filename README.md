@@ -10,6 +10,7 @@
 - `predictions/`：发布前预测。
 - `videos/`：复盘资料和元数据。
 - `rubric_notes.md` / `script_patterns.md` / `audience.md`：内容系统记忆。
+- `visual_patterns.md`：长期保存画风、剪辑、字幕和视觉表达参考。
 - `codex-skills/content-strategy-room/`：可安装到 Codex 的策划会 SKILL。
 
 ## 不同步内容

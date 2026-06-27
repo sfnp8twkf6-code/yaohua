@@ -172,6 +172,7 @@ Codex -> 评分和预测
 | `rubric_notes.md` | 当前评分规则 |
 | `rubric-memo.md` | 评分规则升级证据 |
 | `script_patterns.md` | 你的写作结构模板 |
+| `visual_patterns.md` | 画风、剪辑、字幕和视觉表达参考 |
 | `audience.md` | 受众画像 |
 | `.cheat-state.json` | cheat-on-content 状态 |
 
